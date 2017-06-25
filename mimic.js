@@ -103,6 +103,8 @@ detector.addEventListener("onInitializeSuccess", function() {
 
   // TODO(optional): Call a function to initialize the game, if needed
   // <your code here>
+  targetEmojiUnicode = makeNewEmojiUnicode(targetEmojiUnicode);
+  setTargetEmoji(targetEmojiUnicode);
 });
 
 // Add a callback to receive the results from processing an image
@@ -134,6 +136,7 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
 
     // TODO: Call your function to run the game (define it first!)
     // <your code here>
+    mimicEmoji(faces[0])
   }
 });
 
@@ -195,3 +198,31 @@ function drawEmoji(canvas, img, face) {
 // - Define a game reset function (same as init?), and call it from the onReset() function above
 
 // <your code here>
+var correct = 0;
+var total = 0;
+var targetEmojiUnicode = emojis[Math.floor(Math.random() * emojis.length)];
+
+function makeNewEmojiUnicode(oldUnicode) {
+  // produce a new emoji unicode that is different than the old one
+  var newEmojiUnicode = emojis[Math.floor(Math.random() * emojis.length)];
+  if (newEmojiUnicode == oldUnicode) {
+    newEmojiUnicode = makeNewEmojiUnicode(oldUnicode);
+  }
+  else {
+    total += 1;
+    setScore(correct, total);
+  }
+  return newEmojiUnicode;
+}
+
+function mimicEmoji(face) {
+  // set <div id="target"></div> to target emojis
+  var faceEmojiUnicode = toUnicode(face.emojis.dominantEmoji);
+  if (faceEmojiUnicode == targetEmojiUnicode) {
+    // If
+    correct += 1;
+    setScore(correct, total)
+    targetEmojiUnicode = makeNewEmojiUnicode(targetEmojiUnicode);
+    setTargetEmoji(targetEmojiUnicode);
+  }
+}
