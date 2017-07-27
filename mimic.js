@@ -105,6 +105,7 @@ detector.addEventListener("onInitializeSuccess", function() {
   // <your code here>
   targetEmojiUnicode = makeNewEmojiUnicode(targetEmojiUnicode);
   setTargetEmoji(targetEmojiUnicode);
+  lastTime = performance.now();
 });
 
 // Add a callback to receive the results from processing an image
@@ -201,6 +202,7 @@ function drawEmoji(canvas, img, face) {
 var correct = 0;
 var total = 0;
 var targetEmojiUnicode = emojis[Math.floor(Math.random() * emojis.length)];
+var lastTime = 0;
 
 function makeNewEmojiUnicode(oldUnicode) {
   // produce a new emoji unicode that is different than the old one
@@ -218,11 +220,17 @@ function makeNewEmojiUnicode(oldUnicode) {
 function mimicEmoji(face) {
   // set <div id="target"></div> to target emojis
   var faceEmojiUnicode = toUnicode(face.emojis.dominantEmoji);
+  var currentTime = performance.now()
   if (faceEmojiUnicode == targetEmojiUnicode) {
-    // If
+    // If face matches target emoji, give a score
     correct += 1;
     setScore(correct, total)
     targetEmojiUnicode = makeNewEmojiUnicode(targetEmojiUnicode);
     setTargetEmoji(targetEmojiUnicode);
+  }
+  else if (currentTime - lastTime > 8000) {
+    targetEmojiUnicode = makeNewEmojiUnicode(targetEmojiUnicode);
+    setTargetEmoji(targetEmojiUnicode);
+    lastTime = currentTime;
   }
 }
